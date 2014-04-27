@@ -12,36 +12,38 @@ import java.util.Iterator;
 
 public class Server implements Runnable {
     private final int port;
-    private ServerSocketChannel ssc;
+    private ServerSocketChannel serverSocketChannel;
     private Selector selector;
-    private ByteBuffer buf = ByteBuffer.allocate(256);
+    private ByteBuffer byteBuffer = ByteBuffer.allocate(256);
+    private final ByteBuffer welcomeBuffer = ByteBuffer.wrap("Welcome to NioChat!\n".getBytes());
     private boolean running = true;
 
     Server(int port) throws IOException {
         this.port = port;
-        this.ssc = ServerSocketChannel.open();
-        this.ssc.socket().bind(new InetSocketAddress(port));
-        this.ssc.configureBlocking(false);
+        this.serverSocketChannel = ServerSocketChannel.open();
+        this.serverSocketChannel.socket().bind(new InetSocketAddress(port));
+        this.serverSocketChannel.configureBlocking(false);
         this.selector = Selector.open();
-
-        this.ssc.register(selector, SelectionKey.OP_ACCEPT);
+        this.serverSocketChannel.register(selector, SelectionKey.OP_ACCEPT);
     }
 
     @Override
     public void run() {
 
-
             try {
                 System.out.println("Server starting on port " + this.port);
 
-                Iterator<SelectionKey> iter;
+                Iterator<SelectionKey> iterator;
                 SelectionKey key;
-                while (this. running && this.ssc.isOpen()) {
-                    selector.select();
-                    iter = this.selector.selectedKeys().iterator();
-                    while (iter.hasNext()) {
-                        key = iter.next();
-                        iter.remove();
+                while (this.running && this.serverSocketChannel.isOpen()) {
+                    //Check activity
+                    if(selector.select() == 0) {
+                        continue;
+                    }
+                    iterator = this.selector.selectedKeys().iterator();
+                    while (iterator.hasNext()) {
+                        key = iterator.next();
+                        iterator.remove();
 
                         if (key.isAcceptable()) this.handleAccept(key);
                         if (key.isReadable()) this.handleRead(key);
@@ -54,37 +56,35 @@ public class Server implements Runnable {
 
     }
 
-    private final ByteBuffer welcomeBuf = ByteBuffer.wrap("Welcome to NioChat!\n".getBytes());
-
     private void handleAccept(SelectionKey key) throws IOException {
-        SocketChannel sc = ((ServerSocketChannel) key.channel()).accept();
-        String address = (new StringBuilder(sc.socket().getInetAddress().toString())).append(":").append(sc.socket().getPort()).toString();
-        sc.configureBlocking(false);
-        sc.register(selector, SelectionKey.OP_READ, address);
-        sc.write(welcomeBuf);
-        welcomeBuf.rewind();
+        SocketChannel socketChannel = ((ServerSocketChannel) key.channel()).accept();
+        String address = (new StringBuilder(socketChannel.socket().getInetAddress().toString())).append(":").append(socketChannel.socket().getPort()).toString();
+        socketChannel.configureBlocking(false);
+        socketChannel.register(selector, SelectionKey.OP_READ, address);
+        socketChannel.write(welcomeBuffer);
+        welcomeBuffer.rewind();
         System.out.println("accepted connection from: " + address);
     }
 
     private void handleRead(SelectionKey key) throws IOException {
-        SocketChannel ch = (SocketChannel) key.channel();
-        StringBuilder sb = new StringBuilder();
+        SocketChannel socketChannel = (SocketChannel) key.channel();
+        StringBuilder stringBuilder = new StringBuilder();
 
-        buf.clear();
+        byteBuffer.clear();
         int read = 0;
-        while ((read = ch.read(buf)) > 0) {
-            buf.flip();
-            byte[] bytes = new byte[buf.limit()];
-            buf.get(bytes);
-            sb.append(new String(bytes));
-            buf.clear();
+        while ((read = socketChannel.read(byteBuffer)) > 0) {
+            byteBuffer.flip();
+            byte[] bytes = new byte[byteBuffer.limit()];
+            byteBuffer.get(bytes);
+            stringBuilder.append(new String(bytes));
+            byteBuffer.clear();
         }
         String msg;
         if (read < 0) {
             msg = key.attachment() + " left the chat.\n";
-            ch.close();
+            socketChannel.close();
         } else {
-            msg = key.attachment() + ": " + sb.toString();
+            msg = key.attachment() + ": " + stringBuilder.toString();
         }
         if (msg.equals("close")) {
             this.running = false;

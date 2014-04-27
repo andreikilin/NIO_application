@@ -20,55 +20,35 @@ public class Client {
     }
 
     void talkToServer() {
-
         try {
-
             SocketChannel mySocket = SocketChannel.open();
-
-            // non blocking
             mySocket.configureBlocking(false);
-
-            // connect to a running server
             mySocket.connect(new InetSocketAddress(InetAddress.getLocalHost(), 10523));
-
-            // get a selector
             Selector selector = Selector.open();
-
-            // register the client socket with "connect operation" to the selector
             mySocket.register(selector, SelectionKey.OP_CONNECT);
-
-            // select() blocks until something happens on the underlying socket
             while (selector.select() > 0) {
-
                 Set keys = selector.selectedKeys();
-                Iterator it = keys.iterator();
+                Iterator iterator = keys.iterator();
 
-                while (it.hasNext()) {
-
-                    SelectionKey key = (SelectionKey) it.next();
-
-                    SocketChannel myChannel = (SocketChannel) key.channel();
-
-                    it.remove();
-
-                    if (key.isConnectable()) {
-                        if (myChannel.isConnectionPending()) {
-                            myChannel.finishConnect();
+                while (iterator.hasNext()) {
+                    SelectionKey selectionKey = (SelectionKey) iterator.next();
+                    SocketChannel socketChannel = (SocketChannel) selectionKey.channel();
+                    iterator.remove();
+                    if (selectionKey.isConnectable()) {
+                        if (socketChannel.isConnectionPending()) {
+                            socketChannel.finishConnect();
                             System.out.println("Connection was pending but now is finished connecting.");
                         }
-
-                        ByteBuffer bb = null;
+                        ByteBuffer byteBuffer = null;
                         BufferedReader bufferRead = new BufferedReader(new InputStreamReader(System.in));
-                        bb = ByteBuffer.wrap(new String("I am Client : " + myIdentity).getBytes());
-                        myChannel.write(bb);
-                        bb.clear();
-
+                        byteBuffer = ByteBuffer.wrap(new String("I am Client : " + myIdentity).getBytes());
+                        socketChannel.write(byteBuffer);
+                        byteBuffer.clear();
                         while (true) {
                             String message = bufferRead.readLine();
-                            bb = ByteBuffer.wrap(message.getBytes());
-                            myChannel.write(bb);
-                            bb.clear();
-
+                            byteBuffer = ByteBuffer.wrap(message.getBytes());
+                            socketChannel.write(byteBuffer);
+                            byteBuffer.clear();
                             synchronized (this) {
                                 try {
                                     wait(3000);
@@ -90,10 +70,11 @@ public class Client {
     }
 
     public static void main(String[] args) {
-
-        Client client = new Client(args[0]);
-        client.talkToServer();
+        if (args.length > 0) {
+            Client client = new Client(args[0]);
+            client.talkToServer();
+        } else {
+            System.out.println("Write name");
+        }
     }
-
-
 }
