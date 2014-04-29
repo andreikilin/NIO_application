@@ -1,13 +1,20 @@
 package com.aimprosoft.chat.server;
 
+import com.aimprosoft.library.ByteUtil;
+import com.aimprosoft.library.Message;
+
 import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
+import java.util.Arrays;
 import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 
 
 public class Server implements Runnable {
@@ -69,13 +76,21 @@ public class Server implements Runnable {
     private void handleRead(SelectionKey key) throws IOException {
         SocketChannel socketChannel = (SocketChannel) key.channel();
         StringBuilder stringBuilder = new StringBuilder();
-
+        List<Message> msglist = new LinkedList<>();
+        Message message = null;
         byteBuffer.clear();
+//        Arrays
         int read = 0;
         while ((read = socketChannel.read(byteBuffer)) > 0) {
             byteBuffer.flip();
             byte[] bytes = new byte[byteBuffer.limit()];
             byteBuffer.get(bytes);
+//            try {
+//                message = (Message) ByteUtil.toObject(bytes);
+//            } catch (ClassNotFoundException e) {
+//                e.printStackTrace();
+//            }
+//            msglist.add(message);
             stringBuilder.append(new String(bytes));
             byteBuffer.clear();
         }
