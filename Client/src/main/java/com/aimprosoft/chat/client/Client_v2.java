@@ -2,6 +2,7 @@ package com.aimprosoft.chat.client;
 
 import com.aimprosoft.library.ByteUtil;
 import com.aimprosoft.library.Message;
+import com.aimprosoft.library.TodoProvider.Todo;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
