@@ -80,6 +80,17 @@
             <version>1.0</version>
             <systemPath>${library.dir}/library-1.0.jar</systemPath>
         </dependency>
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-all</artifactId>
+            <version>4.0.0.CR1</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>javassist</groupId>
+            <artifactId>javassist</artifactId>
+            <version>3.12.1.GA</version>
+        </dependency>
     </dependencies>
 
 </project>
