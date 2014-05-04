@@ -35,10 +35,8 @@
                     </descriptorRefs>
                     <archive>
                         <manifest>
-                            <mainClass>com.aimprosoft.chat.client.Client</mainClass>
-                            <!--<packageName>com.aimprosoft.chat.client</packageName>-->
-                            <!--<addClasspath>true</addClasspath>-->
-                            <!--<classpathPrefix>lib/</classpathPrefix>-->
+                            <mainClass>com.aimprosoft.chat.netty.client.ChatClientInit</mainClass>
+                            <!--<mainClass>com.aimprosoft.chat.client.Client</mainClass>-->
                         </manifest>
                         <manifestEntries>
                             <mode>development</mode>

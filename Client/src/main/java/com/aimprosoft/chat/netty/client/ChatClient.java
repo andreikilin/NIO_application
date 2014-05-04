@@ -37,12 +37,9 @@ public class ChatClient {
                 channel.write(in.readLine() + "\r\n");
 
             }
-        } catch (InterruptedException e) {
+        } catch (InterruptedException | IOException e) {
             e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        finally {
+        } finally {
             group.shutdown();
         }
     }
