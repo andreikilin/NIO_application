@@ -1,0 +1,44 @@
+package com.aimprosoft.library;
+
+option java_package = "com.aimprosoft.library";
+option java_outer_classname = "ChatMessage";
+//option optimize_for = CODE_SIZE;
+
+message BaseData {
+    extensions 100 to max;
+
+    enum DataType {
+        USERDATA = 1;
+        SERVERDATA = 2;
+    }
+    required DataType dataType = 1;
+}
+
+message UserData {
+    extend BaseData {
+        required UserData dt = 100;
+    }
+    optional User user = 1;
+    optional Msg msg = 2;
+    optional Date date = 3;
+}
+
+message ServerData {
+    extend BaseData {
+        required ServerData dt = 101;
+    }
+    optional Msg msg = 1;
+    optional Date date = 2;
+}
+
+message Msg {
+    required string text = 1;
+}
+
+message User {
+    required string name = 1;
+}
+
+message Date {
+    required int64 numberformat = 1;
+}

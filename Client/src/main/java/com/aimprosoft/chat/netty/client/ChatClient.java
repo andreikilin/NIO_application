@@ -1,5 +1,7 @@
 package com.aimprosoft.chat.netty.client;
 
+import com.aimprosoft.library.ChatMessage;
+import com.aimprosoft.library.ProtobufWrapper;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;
 import io.netty.channel.EventLoopGroup;
@@ -14,10 +16,14 @@ public class ChatClient {
 
     private final String host;
     private final int port;
+    private final String userName;
+    private ProtobufWrapper pb;
 
-    public ChatClient(String host, int port) {
+    public ChatClient(String host, int port, String userName) {
         this.host = host;
         this.port = port;
+        this.userName = userName;
+        this.pb = new ProtobufWrapper();
     }
 
     public void run() {
@@ -34,13 +40,14 @@ public class ChatClient {
 
             BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
             while(true) {
-                channel.write(in.readLine() + "\r\n");
-
+                String message = in.readLine();
+                ChatMessage.BaseData data = pb.buildUserData(userName, message);
+                channel.writeAndFlush(data);
             }
         } catch (InterruptedException | IOException e) {
             e.printStackTrace();
         } finally {
-            group.shutdown();
+            group.shutdownGracefully();
         }
     }
 }

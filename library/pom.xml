@@ -38,13 +38,15 @@
              <artifactId>maven-antrun-plugin</artifactId>
              <executions>
                  <execution>
-                     <id>generate-sources</id>
-                     <phase>generate-sources</phase>
+                     <!--<id>generate-sources</id>-->
+                     <!--<phase>generate-sources</phase>-->
+                     <id>compile-sources</id>
+                     <phase>compile</phase>
                      <configuration>
                          <tasks>
                              <exec executable="protoc">
                                  <arg value="--java_out=src/main/java" />
-                                 <arg value="src/main/resources/protobuf/todo_provider.proto" />
+                                 <arg value="src/main/resources/protobuf/chat_message.proto" />
                              </exec>
                          </tasks>
                          <sourceRoot>src/main/java</sourceRoot>
@@ -58,13 +60,13 @@
      </plugins>
  </build>
 
-    <dependencies>
-        <dependency>
-            <groupId>com.google.protobuf</groupId>
-            <artifactId>protobuf-java</artifactId>
-            <version>2.5.0</version>
-            <scope>compile</scope>
-        </dependency>
-    </dependencies>
+    <!--<dependencies>-->
+        <!--<dependency>-->
+            <!--<groupId>com.google.protobuf</groupId>-->
+            <!--<artifactId>protobuf-java</artifactId>-->
+            <!--<version>2.5.0</version>-->
+            <!--<scope>compile</scope>-->
+        <!--</dependency>-->
+    <!--</dependencies>-->
 
 </project>

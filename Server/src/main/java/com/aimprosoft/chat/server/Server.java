@@ -1,7 +1,7 @@
 package com.aimprosoft.chat.server;
 
 import com.aimprosoft.library.ByteUtil;
-import com.aimprosoft.library.Message;
+import com.aimprosoft.library.MessageSimple;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -76,8 +76,8 @@ public class Server implements Runnable {
     private void handleRead(SelectionKey key) throws IOException {
         SocketChannel socketChannel = (SocketChannel) key.channel();
         StringBuilder stringBuilder = new StringBuilder();
-        List<Message> msglist = new LinkedList<>();
-        Message message = null;
+        List<MessageSimple> msglist = new LinkedList<>();
+        MessageSimple message = null;
         byteBuffer.clear();
 //        Arrays
         int read = 0;

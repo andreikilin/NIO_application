@@ -32,8 +32,8 @@ public class ChatServer {
             e.printStackTrace();
         }
         finally {
-            masterGroup.shutdown();
-            workerGroup.shutdown();
+            masterGroup.shutdownGracefully();
+            workerGroup.shutdownGracefully();
 
         }
     }

@@ -1,7 +1,7 @@
 package com.aimprosoft.chat.client;
 
 import com.aimprosoft.library.ByteUtil;
-import com.aimprosoft.library.Message;
+import com.aimprosoft.library.MessageSimple;
 
 import java.io.*;
 import java.net.Socket;
@@ -45,24 +45,30 @@ public class Client {
      * метод, где происходит главный цикл чтения сообщений с консоли и отправки на сервер
      */
     public void run() {
-        System.out.println("Type phrase kind nick:password :");
-        while (true) {
-            String userString = null;
-            try {
-                userString = userInput.readLine(); // читаем строку от пользователя
-            } catch (IOException ignored) {} // с консоли эксепшена не может быть в принципе, игнорируем
-            //если что-то не так или пользователь просто нажал Enter...
-            if (userString == null || userString.length() == 0 || s.isClosed()) {
-                close(); // ...закрываем коннект.
-                break; // до этого break мы не дойдем, но стоит он, чтобы компилятор не ругался
-            } else { //...иначе...
+//        System.out.println("Type phrase kind nick:password :");
+//        while (true) {
+//            String userString = null;
+//            try {
+//                userString = userInput.readLine(); // читаем строку от пользователя
+//            } catch (IOException ignored) {} // с консоли эксепшена не может быть в принципе, игнорируем
+//            //если что-то не так или пользователь просто нажал Enter...
+//            if (userString == null || userString.length() == 0 || s.isClosed()) {
+//                close(); // ...закрываем коннект.
+//                break; // до этого break мы не дойдем, но стоит он, чтобы компилятор не ругался
+//            } else { //...иначе...
 
 //                Message message = new Message(userName, userString, new Date());
                 try {
 
 //                    byte[] bytes = ByteUtil.toByteArray(message);
 //                    dos.writeInt(bytes.length);
-                    oos.write(new byte[]{1,2,3});
+//                    oos.writeObject(userString);
+//                    oos.flush();
+//                    oos.writeBytes(userString);
+//                    oos.flush();
+//                    oos.writeChars(userString);
+//                    oos.write(new byte[]{1,2,3});
+                    oos.writeObject("Hello world");
                     oos.flush();
 
                 } catch (IOException e) {
@@ -87,8 +93,8 @@ public class Client {
 //                    close(); // в любой ошибке - закрываем.
 //                }
             }
-        }
-    }
+//        }
+//    }
 
     /**
      * метод закрывает коннект и выходит из
@@ -107,7 +113,7 @@ public class Client {
 
     public static void main(String[] args)  { // входная точка программы
         try {
-            new Client("localhost", 10523, "Makaka").run(); // Пробуем приконнетиться...
+            new Client("localhost", 8000, "Makaka").run(); // Пробуем приконнетиться...
         } catch (IOException e) { // если объект не создан...
             System.out.println("Unable to connect. Server not running?"); // сообщаем...
         }
@@ -126,11 +132,12 @@ public class Client {
                 int length = 0;
                 byte[] bytes = null;
                 try {
-                    length = dis.readInt(); // пробуем прочесть
-                    if (length > 0) {
-                        bytes = new byte[length];
+//                    length = dis.readInt(); // пробуем прочесть
+//                    if (length > 0) {
+                        bytes = new byte[100];
                         read = dis.read(bytes);
-                    }
+
+//                    }
                 } catch (IOException e) { // если в момент чтения ошибка, то...
                     // проверим, что это не банальное штатное закрытие сокета сервером
                     if ("Socket closed".equals(e.getMessage())) {

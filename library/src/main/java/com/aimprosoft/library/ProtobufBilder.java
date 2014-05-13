@@ -1,31 +1,33 @@
 package com.aimprosoft.library;
 
-import com.aimprosoft.library.TodoProvider.Todo;
-import com.aimprosoft.library.TodoProvider.Todos;
-import com.aimprosoft.library.TodoProvider.Todo.Priority;
+import com.google.protobuf.ExtensionRegistry;
 import com.google.protobuf.InvalidProtocolBufferException;
+import com.aimprosoft.library.ChatMessage.UserData;
+import com.aimprosoft.library.ChatMessage;
+
+import java.util.Date;
 
 //import com.google.protobuf.*;
 public class ProtobufBilder {
 
-    Todo todo1 = Todo.newBuilder()
-            .setTitle("Do the laundry")
-            .setPriority(Priority.MEDIUM).build();
-    Todo todo2 = Todo.newBuilder()
-            .setTitle("Write the tutorial")
-            .setPriority(Priority.HIGH).build();
-    Todos todos = Todos.newBuilder()
-            .addTodos(todo1)
-            .addTodos(todo2)
+    ChatMessage.User user = ChatMessage.User.newBuilder().setName("Chacky").build();
+    ChatMessage.Date date = ChatMessage.Date.newBuilder().setNumberformat(new Date().getTime()).build();
+    ChatMessage.Msg msg = ChatMessage.Msg.newBuilder().setText("Hello world").build();
+    ExtensionRegistry registry = ExtensionRegistry.newInstance();
+
+
+    UserData userData = UserData.newBuilder()
+            .setUser(user)
+            .setDate(date)
+            .setMsg(msg)
             .build();
 
 
-
     byte[] bytes = new byte[]{1,2,3};
-    Todos newTodos;
 
     public ProtobufBilder() throws InvalidProtocolBufferException {
-        newTodos = Todos.parseFrom(bytes);
+        ChatMessage.registerAllExtensions(registry);
     }
+
 
 }

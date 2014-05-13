@@ -1,8 +1,7 @@
 package com.aimprosoft.chat.client;
 
 import com.aimprosoft.library.ByteUtil;
-import com.aimprosoft.library.Message;
-import com.aimprosoft.library.TodoProvider.Todo;
+import com.aimprosoft.library.MessageSimple;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -24,7 +23,7 @@ public class Client_v2 implements Runnable{
         client = SocketChannel.open();
         // nonblocking I/O
         client.configureBlocking(false);
-        client.connect(new InetSocketAddress(host,10523));
+        client.connect(new InetSocketAddress(host,8000));
         client.register(sl, SelectionKey.OP_CONNECT);
     }
 
@@ -81,7 +80,7 @@ public class Client_v2 implements Runnable{
                             if (sk.isValid() && sk.isWritable()) {
                                 // send an login:pass string
                                 ByteBuffer sendBuffer; // = ByteBuffer.allocate(256);
-                                Message msg = new Message("Makaka", "Orangutang", new Date());
+                                MessageSimple msg = new MessageSimple("Makaka", "Orangutang", new Date());
 //                                Object ob = sk.attachment();
                                 sendBuffer = ByteBuffer.wrap(ByteUtil.toByteArray(msg));
 //                                if (ob instanceof String) {
